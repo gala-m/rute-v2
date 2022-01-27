@@ -26,7 +26,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npx parcel src/index.html",
-    "build": "parcel build index.html",
+    "build": "parcel build  src/index.html",
     "prod": "npx serve dist/"
   },
   "author": "Gala M",
