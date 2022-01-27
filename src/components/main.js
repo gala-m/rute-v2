@@ -40,13 +40,6 @@ const draw = new MapboxDraw({
 
 map.addControl(draw);
 map.addControl(new mapboxgl.NavigationControl());
-map.addControl(new mapboxgl.GeolocateControl({
-    positionOptions: {
-        enableHighAccuracy: true
-    },
-    trackUserLocation: false,
-    showUserHeading: true
-}));
 
 map.on('mouseenter', 'routeLines', () => {
     map.getCanvas().style.cursor = 'pointer';
