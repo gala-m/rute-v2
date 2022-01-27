@@ -15,7 +15,7 @@
   },
   "devDependencies": {
     "parcel": "^2.0.1", 
-    "@parcel/transformer-image": "~2.2.1",
+    "@parcel/transformer-image": "~2.2.1"
   },
   "alias": {
     "react": "preact/compat",
