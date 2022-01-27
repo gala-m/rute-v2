@@ -1,6 +1,7 @@
-[context.production]
-  publish = "dist/"
-  command = "npm run build"
+[build]
+  publish = "build"
+  command = "echo 'default context'"
+  functions = "functions"
 
 [[headers]]
   for = "/*"
