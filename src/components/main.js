@@ -116,7 +116,7 @@ export default function Content() {
             arrayPusher(iterator, routesArray)
             arrayPusher(iterator2, ranksArray)
 
-            map.on('load', () => {
+            map.on('style.load', () => {
                 map.addSource('points', {
                     'type': 'geojson',
                     'data': value.stops
