@@ -152,7 +152,7 @@ export default function Content() {
     
     useEffect(() => {
         onLoad()
-    }
+    })
     
     useEffect(() => {
         map.once('styledata', () => {
