@@ -67,6 +67,7 @@ map.on('mouseleave', 'points', () => {
 const allStops = {}
 const allRoutes = {}
 const allRanks = {}
+const allRankPoints = {}
 
 const routesArray = []
 const ranksArray = []
@@ -115,6 +116,10 @@ export default function Content() {
 
         $.extend(allRanks, {
             ranks: await fetchRanks
+        });
+        
+        $.extend(allRankPoints, {
+            rankPoints: await fetchRankPoints
         });
         
         const rawRoutes = allRoutes.routes.features
@@ -243,7 +248,7 @@ export default function Content() {
 
             map.addSource('rankPoints', {
                 'type': 'geojson',
-                'data': value.rankPoints, 
+                'data': allRankPoints.rankPoints, 
             }); 
 
             map.addLayer({
