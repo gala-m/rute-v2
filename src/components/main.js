@@ -83,6 +83,7 @@ function arrayPusher(it, arr) {
 
 export default function Content() {
 
+    const [ hasLoaded, setHasLoaded ] = useState(false);
     const [ prevSelect, setPrevSelect ] = useState(null);
     const [ routeView, setRouteView ] = useState(null);
     const [ rank1, setRank1 ] = useState("");
@@ -148,6 +149,8 @@ export default function Content() {
                 az.push(azSorter[i])
             }
         }
+        
+        setHasLoaded(true);
     }
     
     useEffect(() => {
@@ -156,9 +159,10 @@ export default function Content() {
     
     useEffect(() => {
         map.once('styledata', () => {
+            
+            if (!hasLoaded) return;
 
             const sourceObject = map.getSource('points');
-
             if (sourceObject !== undefined) return;
             
             map.addSource('points', {
@@ -267,7 +271,7 @@ export default function Content() {
             }); 
         })
 
-    }, []);   
+    }, [hasLoaded]);   
 
     const RouteList = az.map((element, i) =>
         
