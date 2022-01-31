@@ -123,11 +123,38 @@ export default function Content() {
             rankPoints: await fetchRankPoints
         });
         
-        setHasLoaded(true)
+        const rawRoutes = allRoutes.routes.features
+        const iterator = rawRoutes.values();
+
+        const rawRanks = allRanks.ranks.features
+        const iterator2 = rawRanks.values();
+
+        arrayPusher(iterator, routesArray)
+        arrayPusher(iterator2, ranksArray)
+
+        const OutRoutes = routesArray.filter(element => element.properties.direction === "Out")
+
+        const iterator3 = OutRoutes.values();
+
+        for (const value of iterator3) {
+            azSorter.push(value.properties.name)
+        }
+
+        azSorter.sort()
+
+        var current_number='1'
+
+        for (var i = 0; i < azSorter.length; i++) {
+            if(azSorter[i].charAt(0)!=current_number){
+                az.push(azSorter[i])
+            }
+        } 
+
+        changeComponent("1")
     }
     
     useEffect(() => {
-        onLoad()
+        onLoad().then(() => addToMap())
     })
     
     function addToMap() {
@@ -234,44 +261,6 @@ export default function Content() {
             }, 
         });   
     }
-    
-    map.on('style.load', function () {
-        addToMap()
-    });
-
-    useEffect(() => {
-        if (!hasLoaded) return;
-        const rawRoutes = allRoutes.routes.features
-        const iterator = rawRoutes.values();
-
-        const rawRanks = allRanks.ranks.features
-        const iterator2 = rawRanks.values();
-
-        arrayPusher(iterator, routesArray)
-        arrayPusher(iterator2, ranksArray)
-
-        const OutRoutes = routesArray.filter(element => element.properties.direction === "Out")
-
-        const iterator3 = OutRoutes.values();
-
-        for (const value of iterator3) {
-            azSorter.push(value.properties.name)
-        }
-
-        azSorter.sort()
-
-        var current_number='1'
-
-        for (var i = 0; i < azSorter.length; i++) {
-            if(azSorter[i].charAt(0)!=current_number){
-                az.push(azSorter[i])
-            }
-        } 
-
-        changeComponent("1")
-
-    }, [hasLoaded]);   
-
 
     const RouteList = az.map((element, i) =>
         
