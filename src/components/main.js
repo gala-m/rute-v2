@@ -64,6 +64,17 @@ map.on('mouseleave', 'points', () => {
     map.getCanvas().style.cursor = '';
 });
 
+const allStops = {}
+const allRoutes = {}
+const allRanks = {} 
+const allRankPoints = {}
+
+const routesArray = []
+const ranksArray = []
+
+var azSorter = [];
+var az = []; 
+
 function arrayPusher(it, arr) {
     for (const val of it) {
         arr.push(val)
@@ -83,17 +94,6 @@ export default function Content() {
     const [ done, toggleDone ] = useState(false)
     const [ report, setReport ] = useState("")
 
-    const allStops = {}
-    const allRoutes = {}
-    const allRanks = {} 
-    const allRankPoints = {}
-
-    const routesArray = []
-    const ranksArray = []
-
-    var azSorter = [];
-    var az = []; 
-
     const onLoad = async () => {
 
         const dataPath = 'https://rute-map.herokuapp.com/data/';
@@ -106,51 +106,54 @@ export default function Content() {
         const fetchStops = fetchCache(stopsPath, CACHE_TIME)   
         const fetchRanks = fetchCache(ranksPath, CACHE_TIME) 
         const fetchRankPoints = fetchCache(rankPointsPath, CACHE_TIME) 
-
-        $.extend(allStops, {
-            stops: await fetchStops
-        });
-
-        $.extend(allRoutes, {
-            routes: await fetchRoutes
-        });
-
-        $.extend(allRanks, {
-            ranks: await fetchRanks
-        });
         
-        $.extend(allRankPoints, {
-            rankPoints: await fetchRankPoints
-        });
-        
-        const rawRoutes = allRoutes.routes.features
-        const iterator = rawRoutes.values();
+        if (Object.keys(dummy).length < 1) {
 
-        const rawRanks = allRanks.ranks.features
-        const iterator2 = rawRanks.values();
+            $.extend(allStops, {
+                stops: await fetchStops
+            });
 
-        arrayPusher(iterator, routesArray)
-        arrayPusher(iterator2, ranksArray)
+            $.extend(allRoutes, {
+                routes: await fetchRoutes
+            });
 
-        const OutRoutes = routesArray.filter(element => element.properties.direction === "Out")
+            $.extend(allRanks, {
+                ranks: await fetchRanks
+            });
 
-        const iterator3 = OutRoutes.values();
+            $.extend(allRankPoints, {
+                rankPoints: await fetchRankPoints
+            });
 
-        for (const value of iterator3) {
-            azSorter.push(value.properties.name)
-        }
+            const rawRoutes = allRoutes.routes.features
+            const iterator = rawRoutes.values();
 
-        azSorter.sort()
+            const rawRanks = allRanks.ranks.features
+            const iterator2 = rawRanks.values();
 
-        var current_number='1'
+            arrayPusher(iterator, routesArray)
+            arrayPusher(iterator2, ranksArray)
 
-        for (var i = 0; i < azSorter.length; i++) {
-            if(azSorter[i].charAt(0)!=current_number){
-                az.push(azSorter[i])
+            const OutRoutes = routesArray.filter(element => element.properties.direction === "Out")
+
+            const iterator3 = OutRoutes.values();
+
+            for (const value of iterator3) {
+                azSorter.push(value.properties.name)
             }
-        } 
 
-        changeComponent("1")
+            azSorter.sort()
+
+            var current_number='1'
+
+            for (var i = 0; i < azSorter.length; i++) {
+                if(azSorter[i].charAt(0)!=current_number){
+                    az.push(azSorter[i])
+                }
+            } 
+
+            changeComponent("1")
+        }
     }
     
     onLoad()
