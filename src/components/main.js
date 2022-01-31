@@ -128,7 +128,7 @@ export default function Content() {
     
     useEffect(() => {
         onLoad()
-    }
+    })
     
     function addToMap() {
         map.addSource('points', {
