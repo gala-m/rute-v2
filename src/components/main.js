@@ -94,8 +94,8 @@ export default function Content() {
     const allRanks = {} 
     const allRankPoints = {}
         
-    function setting() {
-        const rawRoutes = allRoutes.routes.features
+    const setting = async () => {
+         const rawRoutes = allRoutes.routes.features
         const iterator = rawRoutes.values();
 
         const rawRanks = allRanks.ranks.features
@@ -152,8 +152,7 @@ export default function Content() {
             rankPoints: await fetchRankPoints
         });
         
-        setting()
-        setHasLoaded(true)
+        setting().then(() => {setMapLoaded(true)})
     }
             
     onLoad()
