@@ -243,7 +243,7 @@ export default function Content() {
         const rawRoutes = allRoutes.routes.features
         const iterator = rawRoutes.values();
 
-        const rawRanks = AllRanks.ranks.features
+        const rawRanks = allRanks.ranks.features
         const iterator2 = rawRanks.values();
 
         arrayPusher(iterator, routesArray)
