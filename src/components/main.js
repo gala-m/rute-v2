@@ -156,17 +156,13 @@ export default function Content() {
         } else { return ; }
     }
     
-    map.on('load', () => {
-        
-        Promise.resolve()
-          .then(() => {
-            onLoad()
-          })
-          .then(() => {
-            console.log(allRoutes.routes)
-            console.log(allRanks.ranks)
-            addToMap()        
-          })
+    map.on('load', async () => {
+        console.log(allRoutes.routes)
+        console.log(allRanks.ranks)
+        const gettingData = await onLoad()
+        console.log(allRoutes.routes)
+        console.log(allRanks.ranks)
+        addToMap()
     })
 
     function addToMap() {
