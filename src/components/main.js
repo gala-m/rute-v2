@@ -82,7 +82,18 @@ export default function Content() {
     const [ prevComponent, setPrevComponent] = useState("2");
     const [ done, toggleDone ] = useState(false)
     const [ report, setReport ] = useState("")
-    
+
+    const allStops = {}
+    const allRoutes = {}
+    const allRanks = {} 
+    const allRankPoints = {}
+
+    const routesArray = []
+    const ranksArray = []
+
+    var azSorter = [];
+    var az = []; 
+
     const onLoad = async () => {
 
         const dataPath = 'https://rute-map.herokuapp.com/data/';
@@ -95,17 +106,6 @@ export default function Content() {
         const fetchStops = fetchCache(stopsPath, CACHE_TIME)   
         const fetchRanks = fetchCache(ranksPath, CACHE_TIME) 
         const fetchRankPoints = fetchCache(rankPointsPath, CACHE_TIME) 
-
-        const allStops = {}
-        const allRoutes = {}
-        const allRanks = {} 
-        const allRankPoints = {}
-
-        const routesArray = []
-        const ranksArray = []
-
-        var azSorter = [];
-        var az = []; 
 
         $.extend(allStops, {
             stops: await fetchStops
