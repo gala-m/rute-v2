@@ -234,15 +234,12 @@ export default function Content() {
     }
     
     map.on('styledata', () => {
+        if (!hasLoaded) return;
         addToMap()
     });
 
     useEffect(() => {
             
-        if (!hasLoaded) return;
-        
-        addToMap()
-
         const rawRoutes = allRoutes.routes.features
         const iterator = rawRoutes.values();
 
