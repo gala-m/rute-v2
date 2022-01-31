@@ -136,39 +136,32 @@ export default function Content() {
         const fetchRanks = fetchCache(ranksPath, CACHE_TIME) 
         const fetchRankPoints = fetchCache(rankPointsPath, CACHE_TIME) 
 
-        $.extend(allStops, {
-            stops: await fetchStops
-        });
-
-        $.extend(allRoutes, {
-            routes: await fetchRoutes
-        });
-
-        $.extend(allRanks, {
-            ranks: await fetchRanks
-        });
-        
-        $.extend(allRankPoints, {
+        const data = {
+            stops: await fetchStops,
+            routes: await fetchRoutes, 
+            ranks: await fetchRanks, 
             rankPoints: await fetchRankPoints
-        });
-        
-        setting().then(() => {setHasLoaded(true)})
-    }
-            
-    onLoad()
-    
-    useEffect(() => {
-        map.once('styledata', () => {
+        }
 
-            const sourceObject = map.getSource('points');
-            
-            if (sourceObject !== undefined)  { 
-                return false;
-            } else if (allStops.hasOwnProperty('stops')) {
-            
+        return data
+    }
+
+    useEffect(() => {
+        onLoad().then((value) => {
+
+            const rawRoutes = value.routes.features
+            const iterator = rawRoutes.values();
+
+            const rawRanks = value.ranks.features
+            const iterator2 = rawRanks.values();
+
+            arrayPusher(iterator, routesArray)
+            arrayPusher(iterator2, ranksArray)
+
+            map.on('load', () => {
                 map.addSource('points', {
                     'type': 'geojson',
-                    'data': allStops.stops
+                    'data': value.stops
                 })
 
                 map.addLayer({
@@ -185,7 +178,7 @@ export default function Content() {
 
                 map.addSource('routes', {
                     'type': 'geojson',
-                    'data': allRoutes.routes, 
+                    'data': value.routes, 
                     lineMetrics: true,
                 });    
 
@@ -216,7 +209,7 @@ export default function Content() {
 
                 map.addSource('ranks', {
                     'type': 'geojson',
-                    'data': allRanks.ranks, 
+                    'data': value.ranks, 
                 });    
 
                 map.addLayer({
@@ -253,7 +246,7 @@ export default function Content() {
 
                 map.addSource('rankPoints', {
                     'type': 'geojson',
-                    'data': allRankPoints.rankPoints, 
+                    'data': value.rankPoints, 
                 }); 
 
                 map.addLayer({
@@ -269,11 +262,30 @@ export default function Content() {
                     'layout': {  
                         'visibility': 'none'          
                     }, 
-                });
-            }
-        })
+                }); 
+            })
 
-    }, [hasLoaded]);   
+            const OutRoutes = routesArray.filter(element => element.properties.direction === "Out")
+
+            const iterator3 = OutRoutes.values();
+
+            for (const value of iterator3) {
+                azSorter.push(value.properties.name)
+            }
+
+            azSorter.sort()
+
+            var current_number='1'
+
+            for (var i = 0; i < azSorter.length; i++) {
+                if(azSorter[i].charAt(0)!=current_number){
+                    az.push(azSorter[i])
+                }
+            } 
+
+        })
+    }, []);   
+
 
     const RouteList = az.map((element, i) =>
         
