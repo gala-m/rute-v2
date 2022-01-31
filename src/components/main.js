@@ -123,112 +123,108 @@ export default function Content() {
             arrayPusher(iterator, routesArray)
             arrayPusher(iterator2, ranksArray)
 
-            map.on('load', () => {
-                map.addSource('points', {
-                    'type': 'geojson',
-                    'data': value.stops
-                })
-
-                map.addLayer({
-                    'id': 'points',
-                    'source': 'points',
-                    'type': 'circle',
-                    'paint': {
-                        'circle-radius': ['interpolate', ['linear'], ['zoom'], 7, 1, 15, 5],
-                        'circle-color': '#0b1e57', 
-                        'circle-stroke-width': 1,
-                        'circle-stroke-color': '#fff'
-                    }                    
-                });
-
-                map.addSource('routes', {
-                    'type': 'geojson',
-                    'data': value.routes, 
-                    lineMetrics: true,
-                });    
-
-                map.addLayer({
-                    'id': 'routesLayer',
-                    'type': 'line',
-                    'source': 'routes',
-                    'layout': {
-                        'line-cap': 'round',  
-                        'visibility': 'none'          
-                    },
-                    'paint': {
-                        'line-color': '#07143b',
-                        'line-width': 2,
-                        'line-gradient': [
-                            'interpolate',
-                            ['linear'],
-                            ['line-progress'],
-                            0,
-                            '#07143b',
-                            1,
-                            '#7f0f2f',
-                        ],
-                    }
-                }); 
-
-                changeComponent("1")
-
-                map.addSource('ranks', {
-                    'type': 'geojson',
-                    'data': value.ranks, 
-                });    
-
-                map.addLayer({
-                    'id': 'ranksLayer',
-                    'type': 'fill',
-                    'source': 'ranks',
-                    'paint': {
-                        'fill-color': '#7f0f2f',
-                        'fill-antialias': true,
-                        'fill-outline-color': '#ffffff',
-                        'fill-opacity': 0.3
-                    } 
-                }); 
-
-                map.addLayer({
-                    'id': 'text',
-                    'type': 'symbol',
-                    'source': 'ranks',
-                    'paint': {
-                        'text-halo-width': 2,
-                        'text-halo-color': '#ffffff'                    
-                    },
-                    'layout': {
-                        'icon-image': "rbus",
-                        'icon-size': 0.2,
-                        'icon-offset': [20,-20],
-                        'text-field': ['get', 'rank'], 
-                        'text-anchor': 'bottom-left',
-                        'text-offset': [1.5,-0.6],
-                        'text-font': ['DIN Pro Regular'],
-                        'visibility': 'none' 
-                    }
-                });  
-
-                map.addSource('rankPoints', {
-                    'type': 'geojson',
-                    'data': value.rankPoints, 
-                }); 
-
-                map.addLayer({
-                    'id': 'marker',
-                    'type': 'circle',
-                    'source': 'rankPoints',
-                    'paint': {
-                        'circle-color': 'rgb(255, 255, 0 0)', 
-                        'circle-opacity': 0,
-                        'circle-stroke-width': 2,
-                        'circle-stroke-color': '#0b1e57'
-                    },
-                    'layout': {  
-                        'visibility': 'none'          
-                    }, 
-                }); 
+            map.addSource('points', {
+                'type': 'geojson',
+                'data': value.stops
             })
+
+            map.addLayer({
+                'id': 'points',
+                'source': 'points',
+                'type': 'circle',
+                'paint': {
+                    'circle-radius': ['interpolate', ['linear'], ['zoom'], 7, 1, 15, 5],
+                    'circle-color': '#0b1e57', 
+                    'circle-stroke-width': 1,
+                    'circle-stroke-color': '#fff'
+                }                    
+            });
+
+            map.addSource('routes', {
+                'type': 'geojson',
+                'data': value.routes, 
+                lineMetrics: true,
+            });    
+
+            map.addLayer({
+                'id': 'routesLayer',
+                'type': 'line',
+                'source': 'routes',
+                'layout': {
+                    'line-cap': 'round',  
+                    'visibility': 'none'          
+                },
+                'paint': {
+                    'line-color': '#07143b',
+                    'line-width': 2,
+                    'line-gradient': [
+                        'interpolate',
+                        ['linear'],
+                        ['line-progress'],
+                        0,
+                        '#07143b',
+                        1,
+                        '#7f0f2f',
+                    ],
+                }
+            }); 
+
+            map.addSource('ranks', {
+                'type': 'geojson',
+                'data': value.ranks, 
+            });    
+
+            map.addLayer({
+                'id': 'ranksLayer',
+                'type': 'fill',
+                'source': 'ranks',
+                'paint': {
+                    'fill-color': '#7f0f2f',
+                    'fill-antialias': true,
+                    'fill-outline-color': '#ffffff',
+                    'fill-opacity': 0.3
+                } 
+            }); 
+
+            map.addLayer({
+                'id': 'text',
+                'type': 'symbol',
+                'source': 'ranks',
+                'paint': {
+                    'text-halo-width': 2,
+                    'text-halo-color': '#ffffff'                    
+                },
+                'layout': {
+                    'icon-image': "rbus",
+                    'icon-size': 0.2,
+                    'icon-offset': [20,-20],
+                    'text-field': ['get', 'rank'], 
+                    'text-anchor': 'bottom-left',
+                    'text-offset': [1.5,-0.6],
+                    'text-font': ['DIN Pro Regular'],
+                    'visibility': 'none' 
+                }
+            });  
+
+            map.addSource('rankPoints', {
+                'type': 'geojson',
+                'data': value.rankPoints, 
+            }); 
+
+            map.addLayer({
+                'id': 'marker',
+                'type': 'circle',
+                'source': 'rankPoints',
+                'paint': {
+                    'circle-color': 'rgb(255, 255, 0 0)', 
+                    'circle-opacity': 0,
+                    'circle-stroke-width': 2,
+                    'circle-stroke-color': '#0b1e57'
+                },
+                'layout': {  
+                    'visibility': 'none'          
+                }, 
+            }); 
 
             const OutRoutes = routesArray.filter(element => element.properties.direction === "Out")
 
