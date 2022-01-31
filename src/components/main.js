@@ -126,7 +126,9 @@ export default function Content() {
         setHasLoaded(true)
     }
     
-    onLoad()
+    useEffect(() => {
+        onLoad()
+    }
     
     function addToMap() {
         map.addSource('points', {
@@ -239,8 +241,6 @@ export default function Content() {
 
     useEffect(() => {
         if (!hasLoaded) return;
-        addToMap()
-            
         const rawRoutes = allRoutes.routes.features
         const iterator = rawRoutes.values();
 
