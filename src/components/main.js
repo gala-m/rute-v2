@@ -64,23 +64,6 @@ map.on('mouseleave', 'points', () => {
     map.getCanvas().style.cursor = '';
 });
 
-const allStops = {}
-const allRoutes = {}
-const allRanks = {}
-const allRankPoints = {}
-
-const routesArray = []
-const ranksArray = []
-
-var azSorter = [];
-var az = [];
-
-function arrayPusher(it, arr) {
-    for (const val of it) {
-        arr.push(val)
-    }
-}
-
 export default function Content() {
 
     const [ hasLoaded, setHasLoaded ] = useState(false);
@@ -93,6 +76,53 @@ export default function Content() {
     const [ prevComponent, setPrevComponent] = useState("2");
     const [ done, toggleDone ] = useState(false)
     const [ report, setReport ] = useState("")
+    
+    const routesArray = []
+    const ranksArray = []
+
+    var azSorter = [];
+    var az = [];
+
+    function arrayPusher(it, arr) {
+        for (const val of it) {
+            arr.push(val)
+        }
+    }
+
+    const allStops = {}
+    const allRoutes = {}
+    const allRanks = {} 
+        
+    function setting() {
+        const rawRoutes = allRoutes.routes.features
+        const iterator = rawRoutes.values();
+
+        const rawRanks = allRanks.ranks.features
+        const iterator2 = rawRanks.values();
+
+        arrayPusher(iterator, routesArray)
+        arrayPusher(iterator2, ranksArray)    
+
+        const OutRoutes = routesArray.filter(element => element.properties.direction === "Out")
+
+        const iterator3 = OutRoutes.values();
+
+        for (const value of iterator3) {
+            azSorter.push(value.properties.name)
+        }
+
+        azSorter.sort()
+
+        var current_number='1'
+
+        for (var i = 0; i < azSorter.length; i++) {
+            if(azSorter[i].charAt(0)!=current_number){
+                az.push(azSorter[i])
+            }
+        }
+
+        setHasLoaded(true);   
+    }
 
     const onLoad = async () => {
 
@@ -123,39 +153,11 @@ export default function Content() {
             rankPoints: await fetchRankPoints
         });
         
-        const rawRoutes = allRoutes.routes.features
-        const iterator = rawRoutes.values();
-
-        const rawRanks = allRanks.ranks.features
-        const iterator2 = rawRanks.values();
-
-        arrayPusher(iterator, routesArray)
-        arrayPusher(iterator2, ranksArray)    
-
-        const OutRoutes = routesArray.filter(element => element.properties.direction === "Out")
-
-        const iterator3 = OutRoutes.values();
-
-        for (const value of iterator3) {
-            azSorter.push(value.properties.name)
-        }
-
-        azSorter.sort()
-
-        var current_number='1'
-
-        for (var i = 0; i < azSorter.length; i++) {
-            if(azSorter[i].charAt(0)!=current_number){
-                az.push(azSorter[i])
-            }
-        }
-        
-        setHasLoaded(true);
+        setting()
+        setHasLoaded(true)
     }
-    
-    useEffect(() => {
-        onLoad()
-    })
+            
+    onLoad()
     
     useEffect(() => {
         map.once('styledata', () => {
@@ -163,112 +165,116 @@ export default function Content() {
             if (!hasLoaded) return;
 
             const sourceObject = map.getSource('points');
-            if (sourceObject !== undefined) return;
             
-            map.addSource('points', {
-                'type': 'geojson',
-                'data': allStops.stops
-            })
+            if (sourceObject !== undefined)  { 
+                return false;
+            } else if (allStops.hasOwnProperty('stops')) {
+            
+                map.addSource('points', {
+                    'type': 'geojson',
+                    'data': allStops.stops
+                })
 
-            map.addLayer({
-                'id': 'points',
-                'source': 'points',
-                'type': 'circle',
-                'paint': {
-                    'circle-radius': ['interpolate', ['linear'], ['zoom'], 7, 1, 15, 5],
-                    'circle-color': '#0b1e57', 
-                    'circle-stroke-width': 1,
-                    'circle-stroke-color': '#fff'
-                }                    
-            });
+                map.addLayer({
+                    'id': 'points',
+                    'source': 'points',
+                    'type': 'circle',
+                    'paint': {
+                        'circle-radius': ['interpolate', ['linear'], ['zoom'], 7, 1, 15, 5],
+                        'circle-color': '#0b1e57', 
+                        'circle-stroke-width': 1,
+                        'circle-stroke-color': '#fff'
+                    }                    
+                });
 
-            map.addSource('routes', {
-                'type': 'geojson',
-                'data': allRoutes.routes, 
-                lineMetrics: true,
-            });    
+                map.addSource('routes', {
+                    'type': 'geojson',
+                    'data': allRoutes.routes, 
+                    lineMetrics: true,
+                });    
 
-            map.addLayer({
-                'id': 'routesLayer',
-                'type': 'line',
-                'source': 'routes',
-                'layout': {
-                    'line-cap': 'round',  
-                    'visibility': 'none'          
-                },
-                'paint': {
-                    'line-color': '#07143b',
-                    'line-width': 2,
-                    'line-gradient': [
-                        'interpolate',
-                        ['linear'],
-                        ['line-progress'],
-                        0,
-                        '#07143b',
-                        1,
-                        '#7f0f2f',
-                    ],
-                }
-            }); 
+                map.addLayer({
+                    'id': 'routesLayer',
+                    'type': 'line',
+                    'source': 'routes',
+                    'layout': {
+                        'line-cap': 'round',  
+                        'visibility': 'none'          
+                    },
+                    'paint': {
+                        'line-color': '#07143b',
+                        'line-width': 2,
+                        'line-gradient': [
+                            'interpolate',
+                            ['linear'],
+                            ['line-progress'],
+                            0,
+                            '#07143b',
+                            1,
+                            '#7f0f2f',
+                        ],
+                    }
+                }); 
 
-            changeComponent("1")
+                changeComponent("1")
 
-            map.addSource('ranks', {
-                'type': 'geojson',
-                'data': allRanks.ranks, 
-            });    
+                map.addSource('ranks', {
+                    'type': 'geojson',
+                    'data': allRanks.ranks, 
+                });    
 
-            map.addLayer({
-                'id': 'ranksLayer',
-                'type': 'fill',
-                'source': 'ranks',
-                'paint': {
-                    'fill-color': '#7f0f2f',
-                    'fill-antialias': true,
-                    'fill-outline-color': '#ffffff',
-                    'fill-opacity': 0.3
-                } 
-            }); 
+                map.addLayer({
+                    'id': 'ranksLayer',
+                    'type': 'fill',
+                    'source': 'ranks',
+                    'paint': {
+                        'fill-color': '#7f0f2f',
+                        'fill-antialias': true,
+                        'fill-outline-color': '#ffffff',
+                        'fill-opacity': 0.3
+                    } 
+                }); 
 
-            map.addLayer({
-                'id': 'text',
-                'type': 'symbol',
-                'source': 'ranks',
-                'paint': {
-                    'text-halo-width': 2,
-                    'text-halo-color': '#ffffff'                    
-                },
-                'layout': {
-                    'icon-image': "rbus",
-                    'icon-size': 0.2,
-                    'icon-offset': [20,-20],
-                    'text-field': ['get', 'rank'], 
-                    'text-anchor': 'bottom-left',
-                    'text-offset': [1.5,-0.6],
-                    'text-font': ['DIN Pro Regular'],
-                    'visibility': 'none' 
-                }
-            });  
+                map.addLayer({
+                    'id': 'text',
+                    'type': 'symbol',
+                    'source': 'ranks',
+                    'paint': {
+                        'text-halo-width': 2,
+                        'text-halo-color': '#ffffff'                    
+                    },
+                    'layout': {
+                        'icon-image': "rbus",
+                        'icon-size': 0.2,
+                        'icon-offset': [20,-20],
+                        'text-field': ['get', 'rank'], 
+                        'text-anchor': 'bottom-left',
+                        'text-offset': [1.5,-0.6],
+                        'text-font': ['DIN Pro Regular'],
+                        'visibility': 'none' 
+                    }
+                });  
 
-            map.addSource('rankPoints', {
-                'type': 'geojson',
-                'data': allRankPoints.rankPoints, 
-            }); 
+                map.addSource('rankPoints', {
+                    'type': 'geojson',
+                    'data': allRankPoints.rankPoints, 
+                }); 
 
-            map.addLayer({
-                'id': 'marker',
-                'type': 'circle',
-                'source': 'rankPoints',
-                'paint': {
-                    'circle-color': 'rgb(255, 255, 0 0)', 
-                    'circle-opacity': 0,
-                    'circle-stroke-width': 2,
-                    'circle-stroke-color': '#0b1e57'
-                },
-                'layout': {  
-                    'visibility': 'none'          
-                }, 
-            }); 
+                map.addLayer({
+                    'id': 'marker',
+                    'type': 'circle',
+                    'source': 'rankPoints',
+                    'paint': {
+                        'circle-color': 'rgb(255, 255, 0 0)', 
+                        'circle-opacity': 0,
+                        'circle-stroke-width': 2,
+                        'circle-stroke-color': '#0b1e57'
+                    },
+                    'layout': {  
+                        'visibility': 'none'          
+                    }, 
+                });
+            }
         })
 
     }, [hasLoaded]);   
