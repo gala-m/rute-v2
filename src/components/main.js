@@ -157,11 +157,7 @@ export default function Content() {
     }
     
     map.on('load', async () => {
-        console.log(allRoutes.routes)
-        console.log(allRanks.ranks)
         const gettingData = await onLoad()
-        console.log(allRoutes.routes)
-        console.log(allRanks.ranks)
         addToMap()
     })
 
