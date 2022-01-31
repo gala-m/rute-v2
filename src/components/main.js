@@ -107,6 +107,17 @@ export default function Content() {
         const fetchRanks = fetchCache(ranksPath, CACHE_TIME) 
         const fetchRankPoints = fetchCache(rankPointsPath, CACHE_TIME) 
 
+        const allStops = {}
+        const allRoutes = {}
+        const allRanks = {} 
+        const allRankPoints = {}
+
+        const routesArray = []
+        const ranksArray = []
+
+        var azSorter = [];
+        var az = []; 
+
         $.extend(allStops, {
             stops: await fetchStops
         });
