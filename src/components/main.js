@@ -89,40 +89,6 @@ export default function Content() {
         }
     }
 
-    const allStops = {}
-    const allRoutes = {}
-    const allRanks = {} 
-    const allRankPoints = {}
-        
-    const setting = async () => {
-         const rawRoutes = allRoutes.routes.features
-        const iterator = rawRoutes.values();
-
-        const rawRanks = allRanks.ranks.features
-        const iterator2 = rawRanks.values();
-
-        arrayPusher(iterator, routesArray)
-        arrayPusher(iterator2, ranksArray)    
-
-        const OutRoutes = routesArray.filter(element => element.properties.direction === "Out")
-
-        const iterator3 = OutRoutes.values();
-
-        for (const value of iterator3) {
-            azSorter.push(value.properties.name)
-        }
-
-        azSorter.sort()
-
-        var current_number='1'
-
-        for (var i = 0; i < azSorter.length; i++) {
-            if(azSorter[i].charAt(0)!=current_number){
-                az.push(azSorter[i])
-            }
-        }
-    }
-
     const onLoad = async () => {
 
         const dataPath = 'https://rute-map.herokuapp.com/data/';
