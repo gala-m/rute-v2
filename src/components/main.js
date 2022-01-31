@@ -131,7 +131,7 @@ export default function Content() {
     function addToMap() {
         map.addSource('points', {
             'type': 'geojson',
-            'data': allRoutes.stops
+            'data': allStops.stops
         })
 
         map.addLayer({
@@ -148,7 +148,7 @@ export default function Content() {
 
         map.addSource('routes', {
             'type': 'geojson',
-            'data': allStops.routes, 
+            'data': allRoutes.routes, 
             lineMetrics: true,
         });    
 
