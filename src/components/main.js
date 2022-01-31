@@ -557,7 +557,8 @@ export default function Content() {
     const Contact = () => {
         return (
             <div>
-                <form id="form-contact" onSubmit={event.preventDefault()} name="form-contact" method="POST" data-netlify="true" class="netlify-form">       
+                <form id="form-contact" onSubmit={event.preventDefault()} name="form-contact" method="POST" data-netlify="true" class="netlify-form">
+                    <input type="hidden" name="form-name" value="form-contact" />
                     <h3>Get in touch</h3>
                     here or at rutemap@outlook.com to report problems or suggest new features. 
                     <br/>
