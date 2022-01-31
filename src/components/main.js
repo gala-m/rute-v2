@@ -158,6 +158,10 @@ export default function Content() {
     })
     
     function addToMap() {
+        
+        const sourceObject = map.getSource('points');
+        if (sourceObject !== undefined) return;
+        
         map.addSource('points', {
             'type': 'geojson',
             'data': allStops.stops
