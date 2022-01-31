@@ -160,8 +160,6 @@ export default function Content() {
     
     useEffect(() => {
         map.once('styledata', () => {
-            
-            if (!hasLoaded) return;
 
             const sourceObject = map.getSource('points');
             
