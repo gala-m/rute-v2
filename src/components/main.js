@@ -233,12 +233,13 @@ export default function Content() {
         });   
     }
     
-    map.on('styledata', () => {
-        if (!hasLoaded) return;
+    map.on('style.load', function () {
         addToMap()
     });
 
     useEffect(() => {
+        if (!hasLoaded) return;
+        addToMap()
             
         const rawRoutes = allRoutes.routes.features
         const iterator = rawRoutes.values();
