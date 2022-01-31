@@ -64,9 +64,20 @@ map.on('mouseleave', 'points', () => {
     map.getCanvas().style.cursor = '';
 });
 
-export default function Content() {
+const routesArray = []
+const ranksArray = []
 
-    const [ hasLoaded, setHasLoaded ] = useState(false);
+var azSorter = [];
+var az = [];
+
+function arrayPusher(it, arr) {
+    for (const val of it) {
+        arr.push(val)
+    }
+}
+
+export default function Content() {
+    
     const [ prevSelect, setPrevSelect ] = useState(null);
     const [ routeView, setRouteView ] = useState(null);
     const [ rank1, setRank1 ] = useState("");
@@ -77,18 +88,6 @@ export default function Content() {
     const [ done, toggleDone ] = useState(false)
     const [ report, setReport ] = useState("")
     
-    const routesArray = []
-    const ranksArray = []
-
-    var azSorter = [];
-    var az = [];
-
-    function arrayPusher(it, arr) {
-        for (const val of it) {
-            arr.push(val)
-        }
-    }
-
     const onLoad = async () => {
 
         const dataPath = 'https://rute-map.herokuapp.com/data/';
