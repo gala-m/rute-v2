@@ -243,6 +243,8 @@ export default function Content() {
                     az.push(azSorter[i])
                 }
             } 
+            
+            changeComponent("1")
 
         })
     }, []);   
