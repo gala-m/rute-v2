@@ -64,17 +64,6 @@ map.on('mouseleave', 'points', () => {
     map.getCanvas().style.cursor = '';
 });
 
-const allStops = {}
-const allRoutes = {}
-const allRanks = {} 
-const allRankPoints = {}
-
-const routesArray = []
-const ranksArray = []
-
-var azSorter = [];
-var az = []; 
-
 function arrayPusher(it, arr) {
     for (const val of it) {
         arr.push(val)
