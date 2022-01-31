@@ -107,7 +107,7 @@ export default function Content() {
         const fetchRanks = fetchCache(ranksPath, CACHE_TIME) 
         const fetchRankPoints = fetchCache(rankPointsPath, CACHE_TIME) 
         
-        if (Object.keys(dummy).length < 1) {
+        if (Object.keys(allRankPoints).length < 1) {
 
             $.extend(allStops, {
                 stops: await fetchStops
@@ -153,7 +153,7 @@ export default function Content() {
             } 
 
             changeComponent("1")
-        }
+        } else { return ; }
     }
     
     onLoad()
