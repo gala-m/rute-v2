@@ -152,7 +152,7 @@ export default function Content() {
             rankPoints: await fetchRankPoints
         });
         
-        setting().then(() => {setMapLoaded(true)})
+        setting().then(() => {setHasLoaded(true)})
     }
             
     onLoad()
