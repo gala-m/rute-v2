@@ -159,6 +159,8 @@ export default function Content() {
     onLoad()
     
     map.on('load', () => {
+        console.log(allRoutes.routes)
+        console.log(allRanks.ranks)
         addToMap()
     })
     
