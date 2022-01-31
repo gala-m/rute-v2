@@ -156,14 +156,19 @@ export default function Content() {
         } else { return ; }
     }
     
-    onLoad()
-    
     map.on('load', () => {
-        console.log(allRoutes.routes)
-        console.log(allRanks.ranks)
-        addToMap()
+        
+        Promise.resolve()
+          .then(() => {
+            onLoad()
+          })
+          .then(() => {
+            console.log(allRoutes.routes)
+            console.log(allRanks.ranks)
+            addToMap()        
+          })
     })
-    
+
     function addToMap() {
         
         const sourceObject = map.getSource('points');
