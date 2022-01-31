@@ -92,6 +92,7 @@ export default function Content() {
     const allStops = {}
     const allRoutes = {}
     const allRanks = {} 
+    const allRankPoints = {}
         
     function setting() {
         const rawRoutes = allRoutes.routes.features
@@ -120,8 +121,6 @@ export default function Content() {
                 az.push(azSorter[i])
             }
         }
-
-        setHasLoaded(true);   
     }
 
     const onLoad = async () => {
