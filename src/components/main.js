@@ -78,6 +78,7 @@ function arrayPusher(it, arr) {
 
 export default function Content() {
     
+    const [ hasLoaded, setHasLoaded ] = useState(false);
     const [ prevSelect, setPrevSelect ] = useState(null);
     const [ routeView, setRouteView ] = useState(null);
     const [ rank1, setRank1 ] = useState("");
@@ -107,12 +108,16 @@ export default function Content() {
             ranks: await fetchRanks, 
             rankPoints: await fetchRankPoints
         }
+        
+        setHasLoaded(true)
 
         return data
     }
 
     useEffect(() => {
         onLoad().then((value) => {
+            
+            if (!hasLoaded) return;
 
             const rawRoutes = value.routes.features
             const iterator = rawRoutes.values();
@@ -247,7 +252,7 @@ export default function Content() {
             changeComponent("1")
 
         })
-    }, []);   
+    }, [hasLoaded]);   
 
 
     const RouteList = az.map((element, i) =>
