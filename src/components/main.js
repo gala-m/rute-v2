@@ -48,19 +48,15 @@ map.addControl(new mapboxgl.GeolocateControl({
     showUserHeading: true
 }));
 
-map.on('mouseenter', 'routeLines', () => {
+map.on('mouseenter', 'routesLayer', (e) => {
     map.getCanvas().style.cursor = 'pointer';
+    
+    const name = e.features[0].properties.name
+    map.setFilter('routesText', ['==', ['get', 'name'], name]);
+    map.setLayoutProperty('routesText', 'visibility', 'visible');
 });
  
-map.on('mouseleave', 'routeLines', () => {
-    map.getCanvas().style.cursor = '';
-});
-
-map.on('mouseenter', 'points', () => {
-    map.getCanvas().style.cursor = 'pointer';
-});
- 
-map.on('mouseleave', 'points', () => {
+map.on('mouseleave', 'routesLayer', () => {
     map.getCanvas().style.cursor = '';
 });
 
@@ -80,8 +76,6 @@ function arrayPusher(it, arr) {
         arr.push(val)
     }
 }
-
-console.log("checker")
 
 export default function Content() {
     
@@ -212,6 +206,25 @@ export default function Content() {
                     '#7f0f2f',
                 ],
             }
+        });
+        
+        map.addLayer({
+            'id': 'routesText',
+            'type': 'symbol',
+            'source': 'routes',
+            'paint': {
+                'text-halo-width': 2,
+                'text-halo-color': '#ffffff',
+                'icon-opacity': 0                   
+            },
+            'layout': {
+                'icon-image': "rbus",
+                'icon-size': 0.2,
+                'icon-offset': [20,-20],
+                'text-field': ['get', 'name'], 
+                'text-font': ['DIN Pro Regular'],
+                'visibility': 'none' 
+            }
         }); 
 
         map.addSource('ranks', {
@@ -306,14 +319,34 @@ export default function Content() {
 
                         )}
                 </div>            
-            </div>
+            </div>    
         )
     )    
+
+    function allRoutes() {
+        return (
+            <div>
+                <div className="bar" onClick={() => clickedAll()} >All Routes</div>
+                { RouteList }                 
+            </div>
+        )
+    }
+
+    function clickedAll() {
+        map.setFilter('routesLayer', null);
+        map.setLayoutProperty('routesLayer', 'visibility', 'visible');
+    }
 
     function reset() {
         document.getElementById(prevSelect).style.cursor = 'pointer'
         document.getElementById(prevSelect).style.borderLeft = 'none rgba(252, 251, 249, 0)'
     }
+
+    map.on('click', 'routesLayer', (e) => {
+        const name = e.features[0].properties.name
+
+        clickedRoute(name)
+    })
 
     const clickedRoute = (name) => {
         
@@ -586,7 +619,7 @@ export default function Content() {
     if (component === '0') {
         toberendered = Loading()
     } else if (component === "1") {
-        toberendered = RouteList
+        toberendered = allRoutes()
     } else if (component === "2") {
         toberendered = DrawContainer()
     } else if (component === "3") {
