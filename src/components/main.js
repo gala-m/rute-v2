@@ -81,6 +81,8 @@ function arrayPusher(it, arr) {
     }
 }
 
+console.log("checker")
+
 export default function Content() {
     
     const [ hasLoaded, setHasLoaded ] = useState(false);
