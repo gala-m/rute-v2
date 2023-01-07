@@ -45,8 +45,8 @@ textarea, input {
 }
 
 #container {
-    height: 95vh;
-    bottom: 30px;
+    height: 85vh;
+    bottom: 90px;
     right: 0;
     left: 0; 
     position: absolute;
@@ -59,6 +59,13 @@ textarea, input {
     padding: 30px;
     border: 3px solid #0b1e57;
     margin: 15px;
+}
+
+#mail {
+    bottom: 40px;
+    position: fixed;
+    margin: auto;
+    width: 320px;
 }
 
 #close {
@@ -78,6 +85,22 @@ textarea, input {
 
 #message {
     height:auto
+}
+
+#back {
+    float: right;
+    background-color: #e9e7e7;
+    padding: 10px;
+    padding-top: 10px;
+    padding-top: 0;    
+}
+
+#radioMenu {
+    margin-left: auto;
+    position: sticky;
+    width: 50%;
+    margin-right: auto;
+    padding-left: 15px;
 }
 
 .input {
@@ -140,7 +163,7 @@ textarea, input {
     margin-top: 0px;
 }
 
-.button:hover, .navButton:hover {
+.button:hover {
     border-bottom: 3px solid #040b21;
 }
 
@@ -154,6 +177,10 @@ textarea, input {
 
 .fa-pen {
     color: green
+}
+
+.fa-envelope:hover {
+    font-weight: normal;
 }
 
 .actionContainer {
@@ -228,13 +255,11 @@ textarea, input {
     }
 
     #container {
-        top: 50px;
+        top: 110px;
         width: 98vw;
         height: 100%;
         border-right-style: none;
         margin: auto;
-        display: grid;
-        grid-template-rows: 1fr 1fr 1fr 1fr;
         overflow: scroll;
     }
 
@@ -263,6 +288,19 @@ textarea, input {
         padding-bottom: 40px;
     }
 
+    #mail {
+        visibility: hidden;
+    }
+
+    #content {
+        padding-top: 30px;
+    }
+
+    #radioMenu {
+        width: 130px;
+        margin: unset;
+        padding: 0;
+    }
     .nav {
         margin-left: auto;
         margin-right: auto;
@@ -272,7 +310,7 @@ textarea, input {
 
     .bar {
         font-size: 18px;
-        width: 79vw;
+        width: 90vw;
     }
 
     .routeInfo {
@@ -307,4 +345,9 @@ textarea, input {
         bottom: 0;
         position: absolute;
     }
+
+    #radioContainer {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;    
+    }    
 }

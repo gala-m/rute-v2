@@ -19,7 +19,7 @@ Rute Map is a tool to search routes and kombi (mini-bus) stops in Botswana. By c
 - display the length of a route by searching the database
 
 ## 💁‍♀️ Crowdsourcing Features
-- add a kombi stop by dropping a leaflet marker
+- add a kombi stop by dropping a mapbox marker
 - name a stop, preferably after its immediate surroundings. 
 - add the routes which pass through a stop, or mutiple stops
 
