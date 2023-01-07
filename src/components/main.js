@@ -268,8 +268,7 @@ export const Content = () => {
                             This route is incomplete.
                             <br /><br />
                             <button class='actionButton' style={"padding: 25px"} onClick={() => changeComponent("2")} >
-                                <b> Add to it </b>
-                                <i class="fas fa-pen fa-beat-fade fa-2xl" style="--fa-beat-fade-opacity: 0.67; --fa-beat-fade-scale: 1.1" ></i>
+                                Add to it <i class="fas fa-pen fa-beat-fade fa-2xl" style="--fa-beat-fade-opacity: 0.67; --fa-beat-fade-scale: 1.1" ></i>
                             </button>
                         </div> }
                     </div> 
@@ -317,7 +316,7 @@ export const Content = () => {
 
     map.on('click', 'routesLayer', (e) => {
         const name = e.features[0].properties.name
-
+        console.log(name)
         clickedRoute(name)
     })
 
