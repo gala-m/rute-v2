@@ -3,5 +3,4 @@
   command = "npm run build"
 
 [context.noncontributing] 
-  command = "echo 'noncontributing'"
   environment = { MAPBOX_TOKEN = "mapbox" }
