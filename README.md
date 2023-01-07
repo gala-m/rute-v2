@@ -9,7 +9,7 @@
 
 Rute Map is a tool to search routes and kombi (mini-bus) stops in Botswana. By crowdsourcing information, it aims to collect the location of stops and routes which pass through to chart an easily accessible network of kombi routes. 
 
-![Screenshot](https://github.com/[gala-m]/[rute-v2]/blob/[noncontributing]/image.jpg?raw=true)
+![Screenshot (132)](https://user-images.githubusercontent.com/76803540/211148778-eddf4648-e2f2-4c48-b1c1-e3754650649b.png)
 
 
 ## 🗺️ Reference Features
