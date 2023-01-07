@@ -14,10 +14,8 @@ export default function SwipeableTemporaryDrawer() {
 
 		const str = event.target.innerHTML 
 
-		if (!str || str.length === 0 || str.length > 30 || str === 'x') {
-			console.log("nothing")
+		if (!str || str.length === 0 || str.length > 30 || str === 'x' || str === 'Add to it' || str === 'Report it'  ) {
 		} else {
-			console.log(event.target.innerHTML)
 			setDrawer(false)
 		}
 	})

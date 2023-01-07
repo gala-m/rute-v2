@@ -26,21 +26,6 @@ function closeWelcome() {
 
 const desktop = window.matchMedia( "(min-width: 601px)" );
 
-export const Marmel = function (props) {
-    //console.log("3. " + props.base)
-
-    const treasure = props.base
-    const treasure2 = treasure.toString()
-
-    console.log(treasure2)
-
-    return treasure2
-}
-
-let resu
-
-console.log()
-
 const map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/winniatthepark/ckxybpudc70p014tl0v5b7j5d',
@@ -103,8 +88,6 @@ export const Content = () => {
     const [ component, setComponent ] = useState("0");
     const [ report, setReport ] = useState("")
     const [ OneBarName, SetOneBarName ] = useState("")
-
-
 
     const SortData = () => {
 
@@ -380,7 +363,6 @@ export const Content = () => {
         map.fitBounds([coord1, coord2], {
             padding: { left: 400, right: 200, top: 100, bottom: 100 }
         });
-
 
         setPrevSelect(name)
 
