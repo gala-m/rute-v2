@@ -14,7 +14,7 @@ if (localStorage.getItem("firstTime") == null) {
     welcomeMessage = <div id="welcome" >
                         <div>
                             <span id='close' style="top: 0px; cursor: pointer;" onclick={() => {closeWelcome(); return false;}}>x</span>  
-                            <div>Welcome to Rute Map. Click on a kombie route below, or hover over over a blue stop to get started. </div>                            
+                            <div>Welcome to Rute Map. Click on a kombie route below to get started. </div>                            
                         </div>
                     </div>
     localStorage.setItem("firstTime","done");
