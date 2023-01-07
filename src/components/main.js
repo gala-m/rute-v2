@@ -7,7 +7,7 @@ import bus from '../../icons/bus.png'
 import { routes } from './data'
 import { ranks } from './data'
 
-mapboxgl.accessToken = config.MAPBOX_TOKEN;
+mapboxgl.accessToken = process.env.MAPBOX_TOKEN;
 
 let welcomeMessage;
 if (localStorage.getItem("firstTime") == null) {
