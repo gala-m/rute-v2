@@ -4,5 +4,5 @@
 
 [context.noncontributing] 
   command = "echo 'noncontributing'"
-  base = "noncontributing"
+  base = "rute-v2"
   environment = { MAPBOX_TOKEN = "mapbox" }
