@@ -3,4 +3,4 @@
   command = "npm run build"
 
 [context.noncontributing] 
-  environment = { MAPBOX_TOKEN = { mapbox }}
+  environment = { MAPBOX_TOKEN = mapbox }
