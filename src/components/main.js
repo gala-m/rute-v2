@@ -6,7 +6,7 @@ import bus from '../../icons/bus.png'
 
 import fetchCache from '../../utils/fetchCache'
 
-mapboxgl.accessToken = 'pk.eyJ1Ijoid2lubmlhdHRoZXBhcmsiLCJhIjoiY2tocWxwYjB3MGFkeTJxcGJ6cDZzd285NCJ9.gZ7tGDVxt_ArW9WptTgK8A'
+mapboxgl.accessToken = process.env.mapbox;
 
 const CACHE_TIME = 24 * 60;
 
