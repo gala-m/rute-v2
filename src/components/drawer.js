@@ -1,36 +1,33 @@
 import * as React from 'preact'
-import { useState } from 'preact/hooks';
+import { useState, useEffect, useCallback } from 'preact/hooks';
 
 import { Global } from '@emotion/react';
 import Drawer from '@mui/material/Drawer'
 
-import { Content } from './main'
+import Content from './main'
 import rute from '../../icons/rute.svg'
+
+var barTagsArr = [];
 
 export default function SwipeableTemporaryDrawer() {
 	const [drawer, setDrawer] = useState(true);
 
-	document.addEventListener('click', (event) => {
+	$( document ).ready(function() {
+		const barTags = document.getElementsByName('barHolder')
 
-		const str = event.target.innerHTML 
-
-		if (!str || str.length === 0 || str.length > 30 || str === 'x' ) {
-			console.log(1 + event.target.innerHTML 
-)
-			return false
-		} else {
-			setDrawer(false)
-			console.log(2 + event.target.innerHTML 
-)
+		for (var i = 0; i < barTags.length; i++) {
+			barTagsArr.push(barTags[i])
 		}
-	})
+		
+		barTagsArr.forEach(element => element.addEventListener("click", () => setDrawer(false)))
+	});
 
 	return (
 		<div id="drawer">
 			<Global
 				styles={{
 					'.MuiDrawer-root > .MuiPaper-root': {
-						height: '90%',
+						height: '40%',
 						overflow: 'visible',
 					},
 				}}
