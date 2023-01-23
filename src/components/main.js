@@ -4,7 +4,8 @@ import { useState } from 'preact/hooks';
 import rute from '../../icons/rute.svg'
 import bus from '../../icons/bus.png'
 
-import fetchCache from '../../utils/fetchCache'
+import { routes } from './data'
+import { ranks } from './data'
 
 const CACHE_TIME = 24 * 60;
 mapboxgl.accessToken = process.env.mapbox;
