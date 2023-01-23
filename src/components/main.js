@@ -1,28 +1,28 @@
 import * as React from 'react'
-import { useEffect, useState } from 'preact/hooks';
+import { useState } from 'preact/hooks';
 
 import rute from '../../icons/rute.svg'
 import bus from '../../icons/bus.png'
 
-import fetchCache from '../../utils/fetchCache'
-
-mapboxgl.accessToken = 'pk.eyJ1Ijoid2lubmlhdHRoZXBhcmsiLCJhIjoiY2tocWxwYjB3MGFkeTJxcGJ6cDZzd285NCJ9.gZ7tGDVxt_ArW9WptTgK8A'
+import { routes } from './data'
+import { ranks } from './data'
 
 const CACHE_TIME = 24 * 60;
+mapboxgl.accessToken = process.env.mapbox;
 
 let welcomeMessage;
 if (localStorage.getItem("firstTime") == null) {
     welcomeMessage = <div id="welcome" >
                         <div>
                             <span id='close' style="top: 0px; cursor: pointer;" onclick={() => {closeWelcome(); return false;}}>x</span>  
-                            <div>Welcome to Rute Map. Click on a kombie route below, or hover over over a blue stop to get started. </div>                            
+                            <div>Welcome to Rute Map. Click on a kombie route below to get started. </div>                            
                         </div>
                     </div>
     localStorage.setItem("firstTime","done");
 }
 
 function closeWelcome() {
-    document.getElementById('welcome').style.display = 'none';;
+    document.getElementById('welcome').style.display = 'none';
 }
 
 const desktop = window.matchMedia( "(min-width: 601px)" );
@@ -34,11 +34,6 @@ const map = new mapboxgl.Map({
     zoom: 12
 });
 
-const draw = new MapboxDraw({
-    displayControlsDefault: false
-});
-
-map.addControl(draw);
 map.addControl(new mapboxgl.NavigationControl());
 map.addControl(new mapboxgl.GeolocateControl({
     positionOptions: {
@@ -60,11 +55,6 @@ map.on('mouseleave', 'routesLayer', () => {
     map.getCanvas().style.cursor = '';
 });
 
-const allStops = {}
-const allRoutes = {}
-const allRanks = {} 
-const allRankPoints = {}
-
 const routesArray = []
 const ranksArray = []
 
@@ -77,18 +67,28 @@ function arrayPusher(it, arr) {
     }
 }
 
-export default function Content() {
+function setRoads() {
+    map.setStyle('mapbox://styles/winniatthepark/ckxybpudc70p014tl0v5b7j5d')
+    location.reload()
+}
+
+function setSatellite() {
+    map.setStyle('mapbox://styles/mapbox/satellite-v9')
+    map.on('style.load', () => {
+            map.getLayer('points')
+    })
+}
+
+export const Content = () => {
     
-    const [ hasLoaded, setHasLoaded ] = useState(false);
     const [ prevSelect, setPrevSelect ] = useState(null);
     const [ routeView, setRouteView ] = useState(null);
     const [ rank1, setRank1 ] = useState("");
     const [ rank2, setRank2 ] = useState("");
     const [ complete, setComplete] = useState(true);
     const [ component, setComponent ] = useState("0");
-    const [ prevComponent, setPrevComponent] = useState("2");
-    const [ done, toggleDone ] = useState(false)
     const [ report, setReport ] = useState("")
+    const [ OneBarName, SetOneBarName ] = useState("")
 
     const onLoad = async () => {
 
@@ -125,7 +125,7 @@ export default function Content() {
             const rawRoutes = allRoutes.routes.features
             const iterator = rawRoutes.values();
 
-            const rawRanks = allRanks.ranks.features
+            const rawRanks = ranks.features
             const iterator2 = rawRanks.values();
 
             arrayPusher(iterator, routesArray)
@@ -148,29 +148,40 @@ export default function Content() {
                     az.push(azSorter[i])
                 }
             } 
-
-            changeComponent("1")
-        } else { return ; }
+        }
     }
-    
+
     map.on('load', async () => {
-        const gettingData = await onLoad()
-        addToMap()
+        onLoad()
+        addSourcesToMap()
+        addLayersToMap()
+        changeComponent("1")
     })
 
-    function addToMap() {
-        
-        const sourceObject = map.getSource('points');
-        if (sourceObject !== undefined) return;
-        
-        map.addSource('points', {
-            'type': 'geojson',
-            'data': allStops.stops
-        })
+    function addSourcesToMap() {
 
+        map.addSource('points', {
+            'type': 'vector',
+            'url': 'mapbox://winniatthepark.6zlrljya'
+        }); 
+
+        map.addSource('routes', {
+            'type': 'geojson',
+            'data': routes, 
+            lineMetrics: true,
+        });    
+
+        map.addSource('ranks', {
+            'type': 'geojson',
+            'data': ranks, 
+        });    
+    }
+
+    function addLayersToMap() {
         map.addLayer({
             'id': 'points',
             'source': 'points',
+            'source-layer': 'stops-0oxq5k',
             'type': 'circle',
             'paint': {
                 'circle-radius': ['interpolate', ['linear'], ['zoom'], 7, 1, 15, 5],
@@ -178,14 +189,8 @@ export default function Content() {
                 'circle-stroke-width': 1,
                 'circle-stroke-color': '#fff'
             }                    
-        });
-
-        map.addSource('routes', {
-            'type': 'geojson',
-            'data': allRoutes.routes, 
-            lineMetrics: true,
         });    
-
+        
         map.addLayer({
             'id': 'routesLayer',
             'type': 'line',
@@ -228,11 +233,6 @@ export default function Content() {
             }
         }); 
 
-        map.addSource('ranks', {
-            'type': 'geojson',
-            'data': allRanks.ranks, 
-        });    
-
         map.addLayer({
             'id': 'ranksLayer',
             'type': 'fill',
@@ -264,71 +264,73 @@ export default function Content() {
                 'visibility': 'none' 
             }
         });  
-
-        map.addSource('rankPoints', {
-            'type': 'geojson',
-            'data': allRankPoints.rankPoints, 
-        }); 
-
-        map.addLayer({
-            'id': 'marker',
-            'type': 'circle',
-            'source': 'rankPoints',
-            'paint': {
-                'circle-color': 'rgb(255, 255, 0 0)', 
-                'circle-opacity': 0,
-                'circle-stroke-width': 2,
-                'circle-stroke-color': '#0b1e57'
-            },
-            'layout': {  
-                'visibility': 'none'          
-            }, 
-        });   
     }
 
-    const RouteList = az.map((element, i) =>
-        
-        (   
-            <div name="barHolder" className="barHolder" >
-                <div className="bar" key={element} id={element} onClick={() => clickedRoute(element, i)} >
-                    <div>{element}</div>
-                        { element === routeView && (
-                            <div class="routeInfo">
-                                <br/>
-                                <div>
-                                    <img alt='busrankicon' src={bus} class="rankicon" />
-                                    Loads at <br/>{rank1}   <i class="fas fa-exchange-alt"></i>   {rank2}</div>
-                                <br/>
-                                <div class='actionContainer' >{ complete ? 
-                                    <button class='viewRouteAction' onClick={() => {setReport('The problem with ' + element + ' is' ); changeComponent("3")}} >
-                                        Is this route incorrect? 
-                                        <div class="actionButton">
-                                            Report it <i class="fas fa-flag"></i>
-                                        </div>
-                                    </button> 
-                                    : 
-                                    <div>
-                                        This route is incomplete.
-                                        <br /><br />
-                                        <button class='actionButton' style={"padding: 25px"} onClick={() => changeComponent("2")} >
-                                            <b> Add to it </b>
-                                            <i class="fas fa-pen fa-beat-fade fa-2xl" style="--fa-beat-fade-opacity: 0.67; --fa-beat-fade-scale: 1.1" ></i>
-                                        </button>
-                                    </div> }
-                                </div> 
-                            </div>
+    const tipRadio = (
+        <div id="radioContainer">
+            <div className="space"></div>
+                <div id="radioMenu" >
+                    <input id="satellite-v9" type="radio" name="rtoggle" value="satellite" onclick={() => setSatellite()} />
+                    <label for="satellite-v9">satellite</label>
+                    <input id="roads" type="radio" name="rtoggle" value="roads" onclick={() => setRoads()} checked="checked" />
+                    <label for="roads">roads</label>
+                </div>              
+            <div className="space"></div>
+        </div>   
+    ) 
 
-                        )}
-                </div>            
-            </div>    
-        )
-    )    
-
-    function allRoutes() {
+    const routeInfo = (element) => {
         return (
             <div>
+                <div class="routeInfo">
+                    <br/>
+                    <div>
+                        <img alt='busrankicon' src={bus} class="rankicon" />
+                        Loads at <br/>{rank1}   <i class="fas fa-exchange-alt"></i>   {rank2}</div>
+                    <br/>
+                    <div class='actionContainer' >{ complete ? 
+                        <button class='viewRouteAction' onClick={() => {setReport('The problem with ' + element + ' is' ); changeComponent("2")}} >
+                            Is this route incorrect? 
+                            <div class="actionButton">
+                                Report it <i class="fas fa-flag"></i>
+                            </div>
+                        </button> 
+                        : 
+                        <div>
+                            This route is incomplete.
+                            <br /><br />
+                            <button class='actionButton' style={"padding: 25px"} onClick={() => changeComponent("2")} >
+                                Add to it <i class="fas fa-pen fa-beat-fade fa-2xl" style="--fa-beat-fade-opacity: 0.67; --fa-beat-fade-scale: 1.1" ></i>
+                            </button>
+                        </div> }
+                    </div> 
+                </div>
+            </div>
+        )
+    }
+
+    const RouteList = az.map((element, i) => 
+        
+        (   
+            <div name="barHolder" className="barHolder">
+                <div className="bar" key={element} id={element} onClick={() => clickedRoute(element, i)} > 
+                    <div>{element}</div>
+                        { element === routeView && (
+                            routeInfo(element) 
+                        )}
+                </div>            
+            </div> 
+        )
+    )
+
+    function allRoutes() {
+        
+        return (
+            <div id="routeList">
+                <div>{ tipRadio }</div>
                 <div className="bar" onClick={() => clickedAll()} >All Routes</div>
-                { RouteList }                 
+                <div>{ RouteList }</div>
+                            
             </div>
         )
     }
@@ -336,6 +338,7 @@ export default function Content() {
     function clickedAll() {
         map.setFilter('routesLayer', null);
         map.setLayoutProperty('routesLayer', 'visibility', 'visible');
+        map.moveLayer('routesLayer', 'points');
     }
 
     function reset() {
@@ -345,7 +348,7 @@ export default function Content() {
 
     map.on('click', 'routesLayer', (e) => {
         const name = e.features[0].properties.name
-
+        console.log(name)
         clickedRoute(name)
     })
 
@@ -392,12 +395,11 @@ export default function Content() {
             padding: { left: 400, right: 200, top: 100, bottom: 100 }
         });
 
-
         setPrevSelect(name)
 
         const matchedRank = ranksArray.filter(element => element.properties.name.includes(name))
 
-        const layerArray = ['marker', 'text', 'ranksLayer'];
+        const layerArray = ['text', 'ranksLayer'];
 
         if (matchedRank.length === 2) {
             setRank1(matchedRank[0].properties.rank)
@@ -422,177 +424,23 @@ export default function Content() {
                       
         }
 
-        map.setLayoutProperty('marker', 'visibility', 'visible'); 
         map.setLayoutProperty('text', 'visibility', 'visible');
-        map.setPaintProperty('ranksLayer', 'fill-opacity', 0.8);        
-    }
+        map.setPaintProperty('ranksLayer', 'fill-opacity', 0.8);   
 
-    map.on('draw.create', () => {toggleDone(true)})
-
-    const DrawContainer = () => {
-
-        const [ save, toggleSave ] = useState(false);
-        const [ table, setTable ] = useState('');
-        const [ tipToggle, setTip ] = useState(false);
-        const [ cancel, setCancel ] = useState(false);
-        const [ data, setData ] = useState({
-            name: '', 
-            routes: '', 
-            email: ''
-        })
-
-        function innerDraw(para) {
-            draw.changeMode(para);
-            setTable(para)
-            setTip(true)
-            setCancel(true)
-
-            var buttons = drawModes.querySelectorAll("button");
-
-            buttons.forEach(function(button) {
-                var id = document.getElementById(button.id)
-                id.style.cursor = 'auto'
-                id.style.color = 'grey'
-                id.disabled = true;
-            })
-        }  
-
-        const handleChange = (e) => {
-
-            const value = e.target.value
-            setData({
-                ...data,
-                [e.target.id]: value
-            })
-        }
-
-        function resetButtons() {
-            var buttons = drawModes.querySelectorAll("button");
-
-            buttons.forEach(function(button) {
-                var id = document.getElementById(button.id)
-                id.style.cursor = 'pointer'
-                id.style.color = '#040b21'
-                id.disabled = false;
-            })
-        }
-
-        function handleCancel() {
-            draw.deleteAll()
-            draw.changeMode('simple_select');
-            toggleDone(false)
-            toggleSave(false)
-            setTip(false)
-            setCancel(false)
-            resetButtons()
-        }
-
-        const tipRadio = (
-            <div id="radioMenu" >
-                <input id="satellite-v9" type="radio" name="rtoggle" value="satellite" onclick={() => map.setStyle('mapbox://styles/mapbox/satellite-v9')} />
-                <label for="satellite-v9">satellite</label>
-                <input id="roads" type="radio" name="rtoggle" value="roads" onclick={() => map.setStyle('mapbox://styles/winniatthepark/ckxybpudc70p014tl0v5b7j5d')} checked="checked" />
-                <label for="roads">roads</label>
-            </div>                
-        )
-
-        switch (table) {
-            case 'draw_point':
-                tip = <div>Switch to satellite map to see the stops on the ground {tipRadio}</div>
-                addName = <label for="name">Give this stop a name</label>;
-                addRoutes = <label for="routes">Which routes pass through this stop? (Separate with commas)</label>
-                break;
-
-            case 'draw_line_string':
-                tip = <div>Press Enter when done</div>
-                addName = <label for="name">Name of Route</label>;
-                addRoutes = ''
-                break;
-
-            case 'draw_polygon':
-                tip = <div>
-                        <div>Switch to satellite map to see the rank on the ground {tipRadio}</div>
-                        <br/>
-                        <div>Press Enter when done</div>
-                    </div>
-                addName = <div><label for="name">Name of Rank</label><br/></div>;
-                addRoutes = <label for="routes">Which routes load at this rank? (Separate with commas)</label>
-                break
-        }
-
-        function drawHandler(table, properties) {
-            const data = draw.getAll();
-
-            const obj = {
-                table: table,
-                properties: properties, 
-                geom: data.features[0].geometry
-            }
-
-            savePoints(obj)
-        }
-
-        function savePoints(obj) {
-
-            $.post("https://rute-map.herokuapp.com/saver", obj,
-                function () {
-
-                    alert("You contribution has been saved. Thank you!")  
-                    handleCancel()       
-                }
-            );
-        } 
-
-        return (
-            <div>
-                { desktop.matches ? 
-                    <div>
-                        <div id="drawModes" >
-                            <button id="draw_polygon" class="button" onClick={() => innerDraw("draw_polygon")} >Draw a Rank</button> 
-                            <br/>
-                            <button id="draw_line_string" class="button" onClick={() => innerDraw("draw_line_string")} >Draw a Route</button>  
-                            <br/>     
-                            <button id="draw_point" class="button" onClick={() => innerDraw("draw_point")} >Draw a Stop</button>                        
-                        </div>
-                        <div>
-                            { tipToggle && ( 
-                                <div id="tip" class="next"> { tip } </div> 
-                            )}
-                            { done && (
-                                <div class="button" style="padding:25px; padding-left:15px;" onClick={() => {toggleDone(false); setTip(false); toggleSave(prevView => !prevView)}} >Done</div>
-                            )}
-                            { save && (
-                                <form class="next" onsubmit={(event) => {drawHandler(table, data); event.preventDefault()}}>
-                                    { addName }
-                                    <input type="text" id="name" class="input"  value={data.name} onChange={(e)=>handleChange(e)} required/>
-                                    <br/>
-                                    { addRoutes }
-                                    <br/>
-                                    <input type="text" id="routes" class="input"  value={data.routes} onChange={(e)=>handleChange(e)} required/>
-                                    <br/>
-                                    <label for="email">If you would like to be notified when your stop is confirmed, please enter your email adress below.</label>
-                                    <br/>
-                                    <input type="email" id="email" class="input" value={data.email} onChange={(e)=>handleChange(e)}/>
-                                    <br/>
-                                    <input type="submit" value="Submit" id="save" class="button" style="margin-left: 0; padding:25px; padding-left:15px;">Save</input>                             
-                                </form>
-                            )}   
-                            { cancel && (
-                                <div class="button" onClick={() => handleCancel()}>Cancel</div>
-                            )}
-                        </div>                    
-                    </div>
-                    :
-                    <div style="padding:20px" >Please switch to desktop in order to contribute with draw</div>
-                }
-            </div>
-
-        )
-    }
+        if (desktop.matches) {
+            null
+        } else {
+            SetOneBarName(name) 
+            changeComponent("3")     
+        }      
+    }  
 
     const Contact = () => {
         return (
             <div>
+                <button id="back" class="navButton" onClick={() => changeComponent("1")}>
+                    x
+                </button>              
                 <form id="form-contact" onSubmit={event.preventDefault()} name="form-contact" method="POST" data-netlify="true" class="netlify-form">
                     <input type="hidden" name="form-name" value="form-contact" />
                     <h3>Get in touch</h3>
@@ -611,6 +459,23 @@ export default function Content() {
         )
     }
 
+    const OneBar = (element) => {
+        return (
+            <div>
+                <div className="bar"> 
+                { OneBarName }
+                <button id="back" class="navButton" onClick={() => changeComponent("1")}>
+                    x
+                </button>     
+                    { OneBarName === routeView && (
+                        routeInfo(element) 
+                    ) }
+                </div>
+            </div>
+        )
+    }
+
+
     const Loading = () => {
         return <div class="loading" ><i class="fas fa-circle-notch fa-spin fa-2xl"></i></div>
     }
@@ -622,17 +487,13 @@ export default function Content() {
     } else if (component === "1") {
         toberendered = allRoutes()
     } else if (component === "2") {
-        toberendered = DrawContainer()
-    } else if (component === "3") {
         toberendered = Contact()
+    } else if (component == "3") {
+        toberendered = OneBar(OneBarName)
     }
 
     function changeComponent(number) {
-        document.getElementById(prevComponent).style.borderBottom = 'none';
-
         setComponent(number); 
-        setPrevComponent(number)
-        document.getElementById(number).style.borderBottom = '3px solid #040b21';
     }
 
     return (
@@ -652,19 +513,11 @@ export default function Content() {
                 { desktop.matches && (
                     <img alt='logo' src={rute} className='logo' />
                 )}
-                <div class="nav">
-                    <button id="1"
-                        class="navButton" 
-                        onClick={() => changeComponent("1")}>routes</button>
-                    <button id="2" 
-                        class="navButton"
-                        onClick={() => changeComponent("2")}>add</button>
-                    <button id="3" 
-                        class="navButton"
-                        onClick={() => changeComponent("3")}>contact</button>
-                </div>
                 <div>{welcomeMessage}</div>
-                <div>{toberendered}</div>
+                <div id="content" >{toberendered}</div>
+                <button id="mail" class="navButton" onClick={() => changeComponent("2")}>
+                    <i class="fa-solid fa-envelope fa-xl fa-inverse" style="margin: auto;padding: 45%;padding-top: 0px; padding-bottom: 0px; color: #0b1e57;"></i>
+                </button>
             </div>            
         </div>
     )
