@@ -6,7 +6,7 @@ import bus from '../../icons/bus.png'
 
 import fetchCache from '../../utils/fetchCache'
 
-mapboxgl.accessToken = config.MAPBOX_TOKEN;
+mapboxgl.accessToken = 'pk.eyJ1Ijoid2lubmlhdHRoZXBhcmsiLCJhIjoiY2tocWxwYjB3MGFkeTJxcGJ6cDZzd285NCJ9.gZ7tGDVxt_ArW9WptTgK8A'
 
 const CACHE_TIME = 24 * 60;
 
@@ -92,16 +92,16 @@ export default function Content() {
 
     const onLoad = async () => {
 
-        const dataPath = 'https://rute-map.herokuapp.com/data/';
+        const dataPath = 'http://gettingstartedapp-env.eba-brgmuyqm.us-east-1.elasticbeanstalk.com/data/';
         const routesPath = dataPath + 'routes3';
         const stopsPath = dataPath + 'points';
         const ranksPath = dataPath + 'ranks'
-        const rankPointsPath = dataPath + 'rankpoints'
+        // const rankPointsPath = dataPath + 'rankpoints'
 
         const fetchRoutes = fetchCache(routesPath, CACHE_TIME);
         const fetchStops = fetchCache(stopsPath, CACHE_TIME)   
         const fetchRanks = fetchCache(ranksPath, CACHE_TIME) 
-        const fetchRankPoints = fetchCache(rankPointsPath, CACHE_TIME) 
+        //const fetchRankPoints = fetchCache(rankPointsPath, CACHE_TIME) 
         
         if (Object.keys(allRankPoints).length < 1) {
 
@@ -116,10 +116,11 @@ export default function Content() {
             $.extend(allRanks, {
                 ranks: await fetchRanks
             });
-
+            /*
             $.extend(allRankPoints, {
                 rankPoints: await fetchRankPoints
             });
+            */
 
             const rawRoutes = allRoutes.routes.features
             const iterator = rawRoutes.values();
